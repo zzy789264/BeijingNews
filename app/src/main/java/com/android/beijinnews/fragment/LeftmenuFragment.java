@@ -24,7 +24,7 @@ public class LeftmenuFragment extends BaseFragment {
     @Override
     public View initView() {
         LogUtil.e("左侧菜单视图被初始化");
-        textView = new TextView(getContext());
+        textView = new TextView(context);
         textView.setTextSize(23);
         textView.setGravity(Gravity.CENTER);
         textView.setTextColor(Color.RED);

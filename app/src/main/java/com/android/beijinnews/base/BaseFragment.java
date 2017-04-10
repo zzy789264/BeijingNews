@@ -12,7 +12,7 @@ import android.view.ViewGroup;
  * Fragment基类
  */
 
-public abstract class BaseFragment extends Fragment{
+public abstract class BaseFragment extends Fragment {
 
     public Context context;//MainActivity
 
@@ -51,7 +51,7 @@ public abstract class BaseFragment extends Fragment{
     /*
     * 如果子页面没有数据，联网请求数据，并且绑定到initView上
     * */
-    public  void initData(){
+    public void initData() {
 
     }
 }

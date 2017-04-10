@@ -1,22 +1,20 @@
-package com.android.beijinnews;
+package com.android.beijinnews.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.android.beijinnews.R;
+import com.android.beijinnews.WelcomeActivity;
 import com.android.beijinnews.utils.CacheUtils;
 import com.android.beijinnews.utils.DensityUtil;
 
@@ -104,7 +102,7 @@ public class GuideActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     //1.保存进入过主页面的参数
-                    CacheUtils.putBoolean(GuideActivity.this,WelcomeActivity.START_MAIN,true);
+                    CacheUtils.putBoolean(GuideActivity.this, WelcomeActivity.START_MAIN,true);
                     //2.跳转主页面
                     Intent intent = new Intent(GuideActivity.this,MainActivity.class);
                     startActivity(intent);
