@@ -81,7 +81,14 @@ public class ContentFragment extends BaseFragment {
         isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
     }
 
-    class MyOnPageChangeListener implements ViewPager.OnPageChangeListener{
+    /*
+    * 得到新闻中心
+    * */
+    public NewsCenterPager getNewsCenterPager() {
+        return (NewsCenterPager) basePagers.get(1);
+    }
+
+    class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -104,37 +111,38 @@ public class ContentFragment extends BaseFragment {
         }
     }
 
-    class MyOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener{
+    class MyOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
 
         /*
         * checkedId 选中的RadioButton
         * */
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            switch (checkedId){
+            switch (checkedId) {
                 case R.id.rb_home:
-                    viewPager.setCurrentItem(0,false);
+                    viewPager.setCurrentItem(0, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
                     break;
                 case R.id.rb_newscenter:
-                    viewPager.setCurrentItem(1,false);
+                    viewPager.setCurrentItem(1, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_FULLSCREEN);
                     break;
                 case R.id.rb_smartservice:
-                    viewPager.setCurrentItem(2,false);
+                    viewPager.setCurrentItem(2, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
                     break;
                 case R.id.rb_govafair:
-                    viewPager.setCurrentItem(3,false);
+                    viewPager.setCurrentItem(3, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
                     break;
                 case R.id.rb_setting:
-                    viewPager.setCurrentItem(4,false);
+                    viewPager.setCurrentItem(4, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
                     break;
             }
         }
     }
+
     /*
     * 根据传入的参数设置是否让SlidingMenu可以滑动
     * */

@@ -28,4 +28,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.xutils:xutils:3.5.0'
     compile project(':SlidingMenu_library')
+    compile files('libs/gson-2.2.1.jar')
 }

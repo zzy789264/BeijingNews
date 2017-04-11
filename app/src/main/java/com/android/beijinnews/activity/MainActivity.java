@@ -44,7 +44,7 @@ public class MainActivity extends SlidingFragmentActivity {
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 
         //5.设置主页占据的宽度
-        slidingMenu.setBehindOffset(DensityUtil.dip2px(MainActivity.this,200));
+        slidingMenu.setBehindOffset(DensityUtil.dip2px(MainActivity.this, 200));
     }
 
     private void initFragment() {
@@ -53,10 +53,26 @@ public class MainActivity extends SlidingFragmentActivity {
         //2.开启事物
         FragmentTransaction ft = fm.beginTransaction();
         //3.替换
-        ft.replace(R.id.fl_main_content,new ContentFragment(),MAIN_CONTENT_TAG);//主页
-        ft.replace(R.id.fl_leftmenu,new LeftmenuFragment(),LEFTMENU_TAG);//左侧菜单
+        ft.replace(R.id.fl_main_content, new ContentFragment(), MAIN_CONTENT_TAG);//主页
+        ft.replace(R.id.fl_leftmenu, new LeftmenuFragment(), LEFTMENU_TAG);//左侧菜单
         //4.提交
         ft.commit();
 
+    }
+
+    /*
+    * 得到左侧菜单的Fragment
+    * */
+    public LeftmenuFragment getLeftMenuFragment() {
+//        FragmentManager fm = getSupportFragmentManager();
+//        LeftmenuFragment leftmenuFragment = (LeftmenuFragment) fm.findFragmentByTag(LEFTMENU_TAG);//根据标签得到左侧菜单
+        return (LeftmenuFragment) getSupportFragmentManager().findFragmentByTag(LEFTMENU_TAG);
+    }
+
+    /*
+    * 得到正文Fragment
+    * */
+    public ContentFragment getContentFragment() {
+        return (ContentFragment) getSupportFragmentManager().findFragmentByTag(MAIN_CONTENT_TAG);
     }
 }
