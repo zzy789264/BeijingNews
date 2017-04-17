@@ -18,5 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
+        android:background="@null"
         android:src="@drawable/img_menu" />
 </RelativeLayout>

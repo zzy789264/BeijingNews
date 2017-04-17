@@ -3,6 +3,7 @@ package com.android.beijinnews.activity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.Window;
 
 import com.android.beijinnews.R;
 import com.android.beijinnews.fragment.ContentFragment;
@@ -18,6 +19,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);//设置无标题
         super.onCreate(savedInstanceState);
         //设置滑动
         intiSlidingMenu();

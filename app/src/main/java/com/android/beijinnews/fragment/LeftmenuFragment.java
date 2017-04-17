@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.android.beijinnews.R;
 import com.android.beijinnews.activity.MainActivity;
 import com.android.beijinnews.base.BaseFragment;
-import com.android.beijinnews.domain.NewsCenterPagerBean;
+import com.android.beijinnews.domain.NewsCenterPagerBean2;
 import com.android.beijinnews.pager.NewsCenterPager;
 import com.android.beijinnews.utils.DensityUtil;
 import com.android.beijinnews.utils.LogUtil;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class LeftmenuFragment extends BaseFragment {
 
-    private List<NewsCenterPagerBean.DataBean> data;
+    private List<NewsCenterPagerBean2.DetailPagerData> data;
 
     private LeftMenuFragmentAdapter adapter;
 
@@ -90,7 +90,7 @@ public class LeftmenuFragment extends BaseFragment {
     /*
     * 接收数据
     * */
-    public void setData(List<NewsCenterPagerBean.DataBean> data) {
+    public void setData(List<NewsCenterPagerBean2.DetailPagerData> data) {
         this.data = data;
         for (int i = 0; i < data.size(); i++) {
             LogUtil.e("title == " + data.get(i).getTitle());

@@ -3,6 +3,7 @@ package com.android.beijinnews.pager;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.beijinnews.base.BasePager;
@@ -25,6 +26,7 @@ public class SettingPager extends BasePager {
     public void initData() {
         super.initData();
         LogUtil.e("设置页面数据被初始化了");
+        ib_menu.setVisibility(View.GONE);
         //1.可以设置标题
         tv_title.setText("设置");
         //2.联网请求得到数据，创建视图
