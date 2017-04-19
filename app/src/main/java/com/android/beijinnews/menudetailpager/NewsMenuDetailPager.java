@@ -65,9 +65,10 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
     @Override
     public void initData() {
         super.initData();
-        LogUtil.e("新闻详情页面被初始化了");
 
-        //准备新闻详情页面数据
+        LogUtil.e("新闻详情页面数据被初始化了..");
+
+        //准备新闻详情页面的数据
         tabDetailPagers = new ArrayList<>();
         for (int i = 0; i < children.size(); i++) {
             tabDetailPagers.add(new TabDetailPager(context, children.get(i)));
@@ -78,9 +79,12 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
         //ViewPager和TabPageIndicator关联
         tabPageIndicator.setViewPager(viewPager);
 
-        //监听页面的变化，将会使用TabPageIndicator进行监听
+        //注意以后监听页面的变化 ，TabPageIndicator监听页面的变化
         tabPageIndicator.setOnPageChangeListener(new MyOnPageChangeListener());
+        viewPager.setCurrentItem(tempPositon);
     }
+
+    private int tempPositon = 0;
 
     class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
 
@@ -91,10 +95,10 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
 
         @Override
         public void onPageSelected(int position) {
-            if(position == 0){
+            if (position == 0) {
                 //设置当位置为0时SlidingMenu可以全屏滑动.
                 isEnableSlidingMenu(SlidingMenu.TOUCHMODE_FULLSCREEN);
-            }else{
+            } else {
                 //设置当位置为0时SlidingMenu可以全屏滑动.
                 isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
             }
@@ -128,7 +132,7 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            TabDetailPager tabDetailPager = tabDetailPagers.get(position);
+            TabDetailPager tabDetailPager  =tabDetailPagers.get(position);
             View rootView = tabDetailPager.rootView;
             tabDetailPager.initData();//初始化数据
             container.addView(rootView);
