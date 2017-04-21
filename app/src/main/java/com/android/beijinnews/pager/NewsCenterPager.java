@@ -46,7 +46,6 @@ public class NewsCenterPager extends BasePager {
 
     private List<NewsCenterPagerBean2.DetailPagerData> data;
 
-
     /*
    * 初始化数据，当孩子需要初始化数据或者绑定数据，联网请求并绑定数据的时候，重写该方法
    * */

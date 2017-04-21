@@ -1,11 +1,14 @@
 package com.android.beijinnews.menudetailpager.tabdetailpager;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.beijinnews.R;
+import com.android.beijinnews.activity.NewsDetailActivity;
 import com.android.beijinnews.base.MenuDetailBasePager;
 import com.android.beijinnews.domain.NewsCenterPagerBean2;
 import com.android.beijinnews.domain.TabDetailPagerBean;
@@ -39,6 +43,7 @@ import java.util.List;
 
 public class TabDetailPager extends MenuDetailBasePager {
 
+    public static final String READ_ARRAY_ID = "read_array_id";
     private HorizontalScrollViewPager viewpager;
     private TextView tv_title;
     private LinearLayout ll_point_group;
@@ -94,7 +99,34 @@ public class TabDetailPager extends MenuDetailBasePager {
         //设置监听刷新
         listview.setOnRefreshListener(new MyOnRefreshListener());
 
+        //设置ListView点击监听
+        listview.setOnItemClickListener(new MyOnItemClickListener());
+
         return view;
+    }
+
+    class MyOnItemClickListener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            int realposition = position - 1;
+            TabDetailPagerBean.DataBean.NewsData newsData = news.get(realposition);
+            //Toast.makeText(context, "newsData==id==" + newsData.getId() + "newsData_title==" + newsData.getTitle(), Toast.LENGTH_SHORT).show();
+            LogUtil.e("newsData==id==" + newsData.getId() + ",newsData_title==" + newsData.getTitle() + ",url==" + newsData.getUrl());
+            //1.取出保存的id集合
+            String idArray = CacheUtils.getString(context, READ_ARRAY_ID);
+            //2.判断是否存在，如果不存在就保存且刷新适配器
+            if (idArray.contains(newsData.getId() + "")) {
+                CacheUtils.putString(context, READ_ARRAY_ID, idArray + newsData.getId() + ",");
+                //刷新适配器
+                adapter.notifyDataSetChanged();
+            }
+
+            //跳转到新闻浏览页面
+            Intent intent = new Intent(context, NewsDetailActivity.class);
+            intent.putExtra("url", Constants.BASE_URL + newsData.getUrl());
+            context.startActivity(intent);
+        }
     }
 
     class MyOnRefreshListener implements RefreshListview.OnRefreshListener {
@@ -237,7 +269,7 @@ public class TabDetailPager extends MenuDetailBasePager {
             adapter = new TabDetailPagerListAdapter();
             listview.setAdapter(adapter);
         } else {
-            //加载跟多
+            //加载更多
             isLoadMore = false;
             //添加更多到原新闻集合中
             news.addAll(bean.getData().getNews());
@@ -294,6 +326,15 @@ public class TabDetailPager extends MenuDetailBasePager {
 
             //设置时间
             viewHolder.tv_time.setText(newsData.getPubdate());
+
+            String idArray = CacheUtils.getString(context, READ_ARRAY_ID);
+            if (idArray.contains(newsData.getId() + "")) {
+                //设置为灰色
+                viewHolder.tv_title.setTextColor(Color.GRAY);
+            } else {
+                //设置为黑色
+                viewHolder.tv_title.setTextColor(Color.BLACK);
+            }
             return convertView;
         }
     }
