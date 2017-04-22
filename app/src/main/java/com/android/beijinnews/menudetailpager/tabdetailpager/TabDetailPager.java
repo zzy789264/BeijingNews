@@ -3,9 +3,11 @@ package com.android.beijinnews.menudetailpager.tabdetailpager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +38,8 @@ import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  * 标签详情页面
@@ -63,6 +67,7 @@ public class TabDetailPager extends MenuDetailBasePager {
     private String moreUrl;
     //是否加载更多
     private boolean isLoadMore = false;
+    private InternalHandler internalHandler;
 
 
     public TabDetailPager(Context context, NewsCenterPagerBean2.DetailPagerData.ChildrenData childrenData) {
@@ -276,6 +281,35 @@ public class TabDetailPager extends MenuDetailBasePager {
             //刷新适配器
             adapter.notifyDataSetChanged();
         }
+
+        //发送消息每隔4000切换一次ViewPager页面
+        if (internalHandler == null) {
+            internalHandler = new InternalHandler();
+        }
+
+        //把消息队列的所有消息和回调移除
+        internalHandler.removeCallbacksAndMessages(null);
+        //4S后执行MyRunnable()中的run()方法
+        internalHandler.postDelayed(new MyRunnable(), 4000);
+    }
+
+    class InternalHandler extends android.os.Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            //切换ViewPager的下一个页面
+            int item = (viewpager.getCurrentItem() + 1) % topnews.size();
+            viewpager.setCurrentItem(item);
+            internalHandler.sendEmptyMessageDelayed(0, 4000);
+        }
+    }
+
+    class MyRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            internalHandler.sendEmptyMessage(0);
+        }
     }
 
     class TabDetailPagerListAdapter extends BaseAdapter {
@@ -371,7 +405,6 @@ public class TabDetailPager extends MenuDetailBasePager {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
         }
 
         @Override
@@ -387,9 +420,25 @@ public class TabDetailPager extends MenuDetailBasePager {
             prePosition = position;
         }
 
+        private boolean isDragging = false;
+
         @Override
         public void onPageScrollStateChanged(int state) {
-
+            if (state == ViewPager.SCROLL_STATE_DRAGGING) {//拖拽
+                isDragging = true;
+                //拖拽时移除消息
+                internalHandler.removeCallbacksAndMessages(null);
+            } else if (state == ViewPager.SCROLL_STATE_SETTLING) {//惯性
+                //发消息
+                isDragging = false;
+                internalHandler.removeCallbacksAndMessages(null);
+                internalHandler.postDelayed(new MyRunnable(), 4000);
+            } else if (state == ViewPager.SCROLL_STATE_IDLE) {//静止
+                //发消息
+                isDragging = false;
+                internalHandler.removeCallbacksAndMessages(null);
+                internalHandler.postDelayed(new MyRunnable(), 4000);
+            }
         }
     }
 
@@ -422,6 +471,26 @@ public class TabDetailPager extends MenuDetailBasePager {
             //联网请求图片
             x.image().bind(imageView, imageUrl);
 
+            imageView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            LogUtil.e("按下");
+                            //把消息队列的所有消息和回调移除
+                            internalHandler.removeCallbacksAndMessages(null);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            LogUtil.e("放开");
+                            //把消息队列的所有消息和回调移除
+                            internalHandler.removeCallbacksAndMessages(null);
+                            //4S后执行MyRunnable()中的run()方法
+                            internalHandler.postDelayed(new MyRunnable(), 4000);
+                            break;
+                    }
+                    return true;
+                }
+            });
             return imageView;
         }
 

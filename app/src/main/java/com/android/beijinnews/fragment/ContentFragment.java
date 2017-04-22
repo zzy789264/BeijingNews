@@ -127,14 +127,14 @@ public class ContentFragment extends BaseFragment {
                     viewPager.setCurrentItem(1, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_FULLSCREEN);
                     break;
-                case R.id.rb_smartservice:
-                    viewPager.setCurrentItem(2, false);
-                    isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
-                    break;
-                case R.id.rb_govafair:
-                    viewPager.setCurrentItem(3, false);
-                    isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
-                    break;
+//                case R.id.rb_smartservice:
+//                    viewPager.setCurrentItem(2, false);
+//                    isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
+//                    break;
+//                case R.id.rb_govafair:
+//                    viewPager.setCurrentItem(3, false);
+//                    isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);
+//                    break;
                 case R.id.rb_setting:
                     viewPager.setCurrentItem(4, false);
                     isEnableSlidingMenu(SlidingMenu.TOUCHMODE_NONE);

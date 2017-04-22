@@ -2,6 +2,7 @@ package com.android.beijinnews.pager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.android.beijinnews.activity.MainActivity;
 import com.android.beijinnews.base.BasePager;
 import com.android.beijinnews.base.MenuDetailBasePager;
 import com.android.beijinnews.domain.NewsCenterPagerBean2;
+import com.android.beijinnews.domain.PhotosMenuDetailPagerBean;
 import com.android.beijinnews.fragment.LeftmenuFragment;
 import com.android.beijinnews.menudetailpager.InteracMenuDetailPager;
 import com.android.beijinnews.menudetailpager.NewsMenuDetailPager;
@@ -19,6 +21,15 @@ import com.android.beijinnews.menudetailpager.TopicMenuDetailPager;
 import com.android.beijinnews.utils.CacheUtils;
 import com.android.beijinnews.utils.Constants;
 import com.android.beijinnews.utils.LogUtil;
+import com.android.beijinnews.volley.VolleyManager;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -28,6 +39,7 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +48,9 @@ import java.util.List;
  */
 
 public class NewsCenterPager extends BasePager {
+
+    //起始时间
+    private long startTime;
 
     public NewsCenterPager(Context context) {
         super(context);
@@ -72,8 +87,55 @@ public class NewsCenterPager extends BasePager {
             processData(saveJson);
         }
 
+        startTime = SystemClock.uptimeMillis();
+
         //联网请求数据
         getDataFromNet();
+        //getDataFromNetByVolley();
+
+    }
+
+    /*
+    * 使用Volley联网请求数据
+    * */
+    private void getDataFromNetByVolley() {
+        //请求队列
+        RequestQueue queue = Volley.newRequestQueue(context);
+        //String请求
+        StringRequest request = new StringRequest(Request.Method.GET, Constants.NEWSCENTER_PAGER_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String result) {
+                long endTime = SystemClock.uptimeMillis();
+                long passTime = endTime - startTime;
+                LogUtil.e("Volley花费时间 == " + passTime);
+                LogUtil.e("使用Volley联网请求成功 == " + result);
+                //缓存数据
+                CacheUtils.putString(context, Constants.NEWSCENTER_PAGER_URL, result);
+
+                //设置适配器
+                processData(result);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                LogUtil.e("使用Volley联网请求失败 == " + volleyError);
+            }
+        }) {
+            //设置文字编码格式UTF-8
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String parsed = new String(response.data, "UTF-8");
+                    return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                return super.parseNetworkResponse(response);
+            }
+        };
+
+        //添加到队列中
+        VolleyManager.getRequestQueue().add(request);
     }
 
     /*
@@ -84,6 +146,9 @@ public class NewsCenterPager extends BasePager {
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                long endTime = SystemClock.uptimeMillis();
+                long passTime = endTime - startTime;
+                LogUtil.e("xUtils3花费时间 == " + passTime);
                 LogUtil.e("使用xUtils3联网请求成功 == " + result);
 
                 //缓存数据
@@ -104,8 +169,7 @@ public class NewsCenterPager extends BasePager {
             }
 
             @Override
-            public void onFinished()
-            {
+            public void onFinished() {
                 LogUtil.e("使用xUtils3-onFinished == ");
             }
         });
@@ -115,11 +179,11 @@ public class NewsCenterPager extends BasePager {
     * 解析JSON数据和显示数据
     * */
     private void processData(String json) {
-       // NewsCenterPagerBean bean = parsedJson(json);
+        // NewsCenterPagerBean bean = parsedJson(json);
         NewsCenterPagerBean2 bean = parsedJson2(json);
-       // String title = bean.getData().get(0).getChildren().get(1).getTitle();
+        // String title = bean.getData().get(0).getChildren().get(1).getTitle();
 
-      //  LogUtil.e("使用Gson解析数据成功-title == " + title);
+        //  LogUtil.e("使用Gson解析数据成功-title == " + title);
         String title2 = bean.getData().get(0).getChildren().get(1).getTitle();
         LogUtil.e("使用Gson解析数据成功-title2 == " + title2);
 
@@ -132,9 +196,9 @@ public class NewsCenterPager extends BasePager {
 
         //添加新闻详情页面
         detailBasePagers = new ArrayList<>();
-        detailBasePagers.add(new NewsMenuDetailPager(context,data.get(0)));
-        detailBasePagers.add(new TopicMenuDetailPager(context,data.get(0)));
-        detailBasePagers.add(new PhotosMenuDetailPager(context));
+        detailBasePagers.add(new NewsMenuDetailPager(context, data.get(0)));
+        detailBasePagers.add(new TopicMenuDetailPager(context, data.get(1)));
+        detailBasePagers.add(new PhotosMenuDetailPager(context, data.get(2)));
         detailBasePagers.add(new InteracMenuDetailPager(context));
 
         //把数据传递给左侧菜单
@@ -231,16 +295,34 @@ public class NewsCenterPager extends BasePager {
     /*
     * 根据位置切换详情页面
     * */
-    public void swichPager(int position) {
+    public void switchPager(int position) {
         //1.设置详情页面标题
         tv_title.setText(data.get(position).getTitle());
         //2.移除之前的内容
         fl_content.removeAllViews();
         //3.添加新内容
-        MenuDetailBasePager detailBasePager = detailBasePagers.get(position);
+        final MenuDetailBasePager detailBasePager = detailBasePagers.get(position);
         View rootView = detailBasePager.rootView;
         detailBasePager.initData();//初始化数据
 
         fl_content.addView(rootView);
+
+        if(position == 2){
+            //图组详情页面
+            ib_switch_list_grid.setVisibility(View.VISIBLE);
+            //设置点击事件,切换图片显示方式
+            ib_switch_list_grid.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //1.得到图组对象
+                    PhotosMenuDetailPager detailPager = (PhotosMenuDetailPager) detailBasePagers.get(2);
+                    //2.得到图组对象切换ListView和GridView的方法
+                    detailPager.switchListAndGrid(ib_switch_list_grid);
+                }
+            });
+        }else {
+            //其他页面
+            ib_switch_list_grid.setVisibility(View.GONE);
+        }
     }
 }

@@ -32,4 +32,5 @@ dependencies {
     compile project(':ViewPagerIndicator_library')
     compile files('libs/glide-3.7.0.jar')
     compile project(':PullToRefresh_library')
+    compile files('libs/volley.jar')
 }

@@ -27,6 +27,9 @@ public class BasePager {
     //帧布局，用以加载各个子页面
     public FrameLayout fl_content;
 
+    public ImageButton ib_switch_list_grid;
+    public ImageButton ib_switch_list_list;
+
     public BasePager(Context context) {
         this.context = context;
         //构造方法一执行，视图初始化
@@ -42,6 +45,8 @@ public class BasePager {
         tv_title = (TextView) view.findViewById(R.id.tv_title);
         ib_menu = (ImageButton) view.findViewById(R.id.ib_menu);
         fl_content = (FrameLayout) view.findViewById(R.id.fl_content);
+        ib_switch_list_grid = (ImageButton) view.findViewById(R.id.ib_switch_list_grid);
+        ib_switch_list_list = (ImageButton) view.findViewById(R.id.ib_switch_list_list);
         ib_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
